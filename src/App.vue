@@ -1,30 +1,52 @@
 <template>
-  <div id="nav">
-    <router-link to="/">Home</router-link> |
-    <router-link to="/about">About</router-link>
+  <Menubar :model="menuItems">
+    <template #start>
+      <strong class="mx-2 md:mx-5">Quicktonne</strong>
+    </template>
+  </Menubar>
+  <div class="container mx-3 md:mx-5">
+    <router-view />
   </div>
-  <router-view />
 </template>
 
+<script lang="ts">
+import { defineComponent, ref } from 'vue';
+import Menubar from 'primevue/menubar';
+
+export default defineComponent({
+  name: 'App',
+  components: {
+    Menubar
+  },
+  setup() {
+    const menuItems = ref([
+      {
+        label: 'Home',
+        icon: 'pi pi-home',
+        to: '/'
+      },
+      {
+        label: 'About',
+        icon: 'pi pi-info-circle',
+        to: '/about'
+      },
+      {
+        label: 'Source code',
+        icon: 'pi pi-github',
+        url: 'https://github.com/maciejpedzich/quicktonne-app',
+        target: '_blank'
+      }
+    ]);
+
+    return { menuItems };
+  }
+});
+</script>
+
 <style>
-#app {
-  font-family: Avenir, Helvetica, Arial, sans-serif;
-  -webkit-font-smoothing: antialiased;
-  -moz-osx-font-smoothing: grayscale;
-  text-align: center;
-  color: #2c3e50;
-}
-
-#nav {
-  padding: 30px;
-}
-
-#nav a {
-  font-weight: bold;
-  color: #2c3e50;
-}
-
-#nav a.router-link-exact-active {
-  color: #42b983;
+body {
+  color: var(--text-color);
+  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
+    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
 }
 </style>
