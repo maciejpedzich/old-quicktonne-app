@@ -9,6 +9,7 @@ import createAuth0Client, {
 import UseAuth0State from '@/types/UseAuth0State';
 import UseAuth0Return from '@/types/UseAuth0Return';
 
+// Top level await baby!
 const auth0Client = await createAuth0Client({
   client_id: import.meta.env.VITE_AUTH0_CLIENT_ID,
   domain: import.meta.env.VITE_AUTH0_DOMAIN,
@@ -17,6 +18,10 @@ const auth0Client = await createAuth0Client({
   cacheLocation: 'localstorage'
 });
 
+/* 
+  We create an internal state reactive object
+  Think of it as a Vuex module state. 
+*/
 const state = reactive<UseAuth0State>({
   isLoading: true,
   isAuthenticated: false,
@@ -25,6 +30,10 @@ const state = reactive<UseAuth0State>({
 });
 
 export default function useAuth0(): UseAuth0Return {
+  /* 
+    Going back to the Vuex analogy:
+    These computed properties are just like Vuex getters
+  */
   const isLoading = computed<boolean>(() => state.isLoading);
   const isAuthenticated = computed<boolean>(() => state.isAuthenticated);
   const currentUser = computed<User | null>(() => state.currentUser);

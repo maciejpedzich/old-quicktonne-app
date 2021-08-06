@@ -17,7 +17,7 @@ export default function authGuard(
 
     /*
       Vue router throws up a warning if the next function is never called.
-      In order to solve this problem, we redirect the user to LogIn route.
+      In order to solve this problem, we redirect the user to the LogIn route.
       That's where we call Auth0 SDK's loginWithRedirect method
     */
     return next({ name: 'LogIn' });
