@@ -1,18 +1,19 @@
 <template>
-  <div class="home">
-    <img alt="Vue logo" src="../assets/logo.png" />
-    <HelloWorld msg="Welcome to Your Vue.js + TypeScript App" />
-  </div>
+  <p v-if="isAuthenticated">Show lobby here, because we're logged in</p>
+  <p v-else>Hero page with a cool slogan, because we're not authenticated</p>
 </template>
 
 <script lang="ts">
-import { defineComponent } from "vue";
-import HelloWorld from "@/components/HelloWorld.vue"; // @ is an alias to /src
+import { defineComponent } from 'vue';
+
+import useAuth0 from '@/composables/useAuth0';
 
 export default defineComponent({
-  name: "Home",
-  components: {
-    HelloWorld,
-  },
+  name: 'Home',
+  setup() {
+    const { isAuthenticated } = useAuth0();
+
+    return { isAuthenticated };
+  }
 });
 </script>
