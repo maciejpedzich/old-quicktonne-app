@@ -1,14 +1,15 @@
 <template>
   <Navbar />
-  <div class="container mt-7 md:mt-8">
+  <div id="main-container" :class="mainContainerClasses">
     <router-view />
   </div>
 </template>
 
 <script lang="ts">
-import { defineComponent } from 'vue';
-import Navbar from '@/components/Navbar.vue';
+import { computed, defineComponent } from 'vue';
+import { useRoute } from 'vue-router';
 
+import Navbar from '@/components/Navbar.vue';
 import useAuth0 from '@/composables/useAuth0';
 
 export default defineComponent({
@@ -17,9 +18,17 @@ export default defineComponent({
     Navbar
   },
   setup() {
-    const { handleRedirectCallback } = useAuth0();
+    const route = useRoute();
+    const { handleRedirectCallback, isAuthenticated } = useAuth0();
+    const mainContainerClasses = computed(() =>
+      route.name === 'Home' && !isAuthenticated.value
+        ? ['flex-grow-1', 'flex', 'justify-content-center']
+        : ['mt-7']
+    );
 
     handleRedirectCallback();
+
+    return { route, isAuthenticated, mainContainerClasses };
   }
 });
 </script>
@@ -29,37 +38,5 @@ body {
   color: var(--text-color);
   font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
     Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
-body {
-  margin: 0;
-  padding: 0;
-  background-color: var(--surface-0);
-  color: var(--text-color);
-  font-family: -apple-system, BlinkMacSystemFont, 'Segoe UI', Roboto, Oxygen,
-    Ubuntu, Cantarell, 'Open Sans', 'Helvetica Neue', sans-serif;
-}
-
-.container {
-  padding-right: 15px;
-  padding-left: 15px;
-  margin-right: auto;
-  margin-left: auto;
-  margin-bottom: 8rem;
-}
-@media (min-width: 768px) {
-  .container {
-    width: 750px;
-  }
-}
-@media (min-width: 992px) {
-  .container {
-    width: 970px;
-  }
-}
-@media (min-width: 1200px) {
-  .container {
-    width: 1170px;
-  }
 }
 </style>
