@@ -4,7 +4,7 @@
     <p class="text-2xl mt-3 mb-4">
       Catchy slogan goes here, think about it later...
     </p>
-    <Button class="p-button-lg" label="Log in" @click="loginWithRedirect" />
+    <Button class="p-button-lg" label="Join now" @click="loginWithRedirect" />
   </div>
 </template>
 

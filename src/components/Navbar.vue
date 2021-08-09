@@ -1,5 +1,5 @@
 <template>
-  <Menubar class="top-0 w-full fixed" :model="menuItems">
+  <Menubar class="top-0 w-full" :model="menuItems">
     <template #start>
       <strong class="mx-2 md:mx-5">Quicktonne</strong>
     </template>

@@ -1,5 +1,5 @@
 <template>
-  <Navbar />
+  <Navbar :class="navbarPositionClass" />
   <div id="main-container" :class="mainContainerClasses">
     <router-view />
   </div>
@@ -20,15 +20,26 @@ export default defineComponent({
   setup() {
     const route = useRoute();
     const { handleRedirectCallback, isAuthenticated } = useAuth0();
-    const mainContainerClasses = computed(() =>
-      route.name === 'Home' && !isAuthenticated.value
-        ? ['flex-grow-1', 'flex', 'justify-content-center']
-        : ['mt-7']
+
+    const homeHeroContainerVisible = computed(
+      () => route.name === 'Home' && !isAuthenticated.value
     );
+    const mainContainerClasses = computed(() =>
+      homeHeroContainerVisible.value
+        ? ['flex-grow-1', 'flex', 'justify-content-center']
+        : []
+    );
+    const navbarPositionClass = computed(() => [
+      homeHeroContainerVisible.value ? 'fixed' : 'sticky'
+    ]);
 
     handleRedirectCallback();
 
-    return { route, isAuthenticated, mainContainerClasses };
+    return {
+      isAuthenticated,
+      mainContainerClasses,
+      navbarPositionClass
+    };
   }
 });
 </script>
