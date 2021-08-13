@@ -2,19 +2,19 @@
   <div class="align-self-center text-center">
     <h1 class="text-6xl m-0">Welcome to Quicktonne!</h1>
     <div v-if="isAuthenticated" class="mt-5">
-      <router-link tag="button" to="/rooms/create">
-        <Button class="p-button-lg" icon="pi pi-plus" label="Create a room" />
-      </router-link>
+      <!-- <router-link tag="button" to="/rooms/create"> -->
+      <Button class="p-button-lg" icon="pi pi-plus" label="Create a room" />
+      <!-- </router-link> -->
       <Divider align="center">
         <span>OR</span>
       </Divider>
-      <!-- <router-link tag="button" to="/rooms"> -->
-      <Button
-        class="p-button-lg p-button-outlined"
-        icon="pi pi-search"
-        label="Browse rooms"
-      />
-      <!-- </router-link> -->
+      <router-link tag="button" to="/rooms">
+        <Button
+          class="p-button-lg p-button-outlined"
+          icon="pi pi-search"
+          label="Browse rooms"
+        />
+      </router-link>
     </div>
     <div v-else>
       <p class="text-2xl mt-3 mb-4">
