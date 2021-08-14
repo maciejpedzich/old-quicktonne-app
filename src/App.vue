@@ -25,14 +25,14 @@ export default defineComponent({
     const route = useRoute();
     const { handleRedirectCallback } = useAuth0();
 
-    const userOnHomepage = computed(() => route.name === 'Home');
+    const centeredContentPages = ['Home', 'CreateRoom'];
     const mainContainerClasses = computed(() =>
-      userOnHomepage.value
+      centeredContentPages.includes(route.name as string)
         ? ['flex-grow-1', 'flex', 'justify-content-center']
         : []
     );
     const navbarPositionClass = computed(() => [
-      userOnHomepage.value ? 'fixed' : 'sticky'
+      centeredContentPages.includes(route.name as string) ? 'fixed' : 'sticky'
     ]);
 
     handleRedirectCallback();
