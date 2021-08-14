@@ -1,12 +1,12 @@
 <template>
   <div class="text-center">
     <h1>Browse rooms</h1>
-    <strong class="text-lg mr-2">Languages:</strong>
     <MultiSelect
       v-model="preferredLanguages"
       :disabled="isLoading"
-      :options="allLanguages"
+      :options="LANGUAGES"
       :selectionLimit="5"
+      placeholder="Choose up to 5 languages"
       optionLabel="label"
       optionValue="value"
       display="chip"
@@ -37,7 +37,7 @@ import { defineComponent, onMounted, onUnmounted } from 'vue';
 import MultiSelect from 'primevue/multiselect';
 import ProgressSpinner from 'primevue/progressspinner';
 
-import useBrowseRooms from '@/composables/useBrowseRooms';
+import useBrowseRooms from '@/composables/rooms/useBrowseRooms';
 
 export default defineComponent({
   name: 'RoomBrowser',
@@ -49,7 +49,7 @@ export default defineComponent({
     const {
       isLoading,
       rooms,
-      allLanguages,
+      LANGUAGES,
       preferredLanguages,
       getAndSubToRoomUpdates,
       cancelRoomUpdatesSub
@@ -59,7 +59,7 @@ export default defineComponent({
 
     onUnmounted(() => cancelRoomUpdatesSub && cancelRoomUpdatesSub());
 
-    return { isLoading, rooms, allLanguages, preferredLanguages };
+    return { isLoading, rooms, LANGUAGES, preferredLanguages };
   }
 });
 </script>
