@@ -10,8 +10,9 @@ import db from '@/db';
 import logErrorInDevMode from '@/utils/logErrorInDevMode';
 import createFirestoreConverter from '@/utils/createFirestoreConverter';
 import Room from '@/types/models/Room';
+import UseCreateRoomReturn from '@/types/return/UseCreateRoom';
 
-export default function useCreateRoom() {
+export default function useCreateRoom(): UseCreateRoomReturn {
   const router = useRouter();
   const toast = useToast();
   const { currentUser } = useAuth0();

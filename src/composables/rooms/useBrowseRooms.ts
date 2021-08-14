@@ -17,12 +17,13 @@ import LANGUAGES from '@/constants/LANGUAGES';
 import logErrorInDevMode from '@/utils/logErrorInDevMode';
 import createFirestoreConverter from '@/utils/createFirestoreConverter';
 import assignIdToDocData from '@/utils/assignIdToDocData';
+import UseBrowseRoomsReturn from '@/types/return/UseBrowseRooms';
 
 const roomsCollection = collection(db, 'rooms').withConverter(
   createFirestoreConverter<Room>()
 );
 
-export default function useBrowseRooms() {
+export default function useBrowseRooms(): UseBrowseRoomsReturn {
   const toast = useToast();
 
   const isLoading = ref(true);
@@ -41,7 +42,7 @@ export default function useBrowseRooms() {
       roomsCollection,
       where('language', 'in', preferredLanguages.value),
       where('isOccupied', '==', false),
-      orderBy('dateCreated')
+      orderBy('dateCreated', 'desc')
     );
 
     cancelRoomUpdatesSub = onSnapshot(
