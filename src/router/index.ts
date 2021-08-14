@@ -1,7 +1,7 @@
 import { createRouter, createWebHistory, RouteRecordRaw } from 'vue-router';
 
 import Home from '../views/Home.vue';
-// import authGuard from '@/guards/auth';
+import authGuard from '@/guards/auth';
 
 const routes: Array<RouteRecordRaw> = [
   {
@@ -22,7 +22,14 @@ const routes: Array<RouteRecordRaw> = [
   {
     path: '/rooms',
     name: 'BrowseRooms',
-    component: () => import('../views/rooms/Browse.vue')
+    component: () => import('../views/rooms/Browse.vue'),
+    beforeEnter: authGuard
+  },
+  {
+    path: '/rooms/create',
+    name: 'CreateRoom',
+    component: () => import('../views/rooms/Create.vue'),
+    beforeEnter: authGuard
   }
 ];
 
