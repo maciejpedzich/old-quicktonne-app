@@ -6,8 +6,8 @@ import createAuth0Client, {
   User
 } from '@auth0/auth0-spa-js';
 
-import UseAuth0State from '@/types/UseAuth0State';
-import UseAuth0Return from '@/types/UseAuth0Return';
+import UseAuth0State from '@/types/states/UseAuth0';
+import UseAuth0Return from '@/types/return/UseAuth0';
 
 // Top level await baby!
 const auth0Client = await createAuth0Client({
