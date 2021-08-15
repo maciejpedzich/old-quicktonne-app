@@ -1,5 +1,5 @@
 <template>
-  <div class="text-center">
+  <div class="justify-content-center text-center">
     <h1>Browse rooms</h1>
     <MultiSelect
       v-model="preferredLanguages"
@@ -23,7 +23,9 @@
       <div v-else>
         <div class="grid mx-2">
           <div v-for="room of rooms" :key="room.id" class="col-3">
-            <p>{{ room.id }}</p>
+            <router-link :to="`/rooms/${room.id}`">
+              {{ room.id }}
+            </router-link>
           </div>
         </div>
       </div>
