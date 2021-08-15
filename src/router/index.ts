@@ -30,6 +30,12 @@ const routes: Array<RouteRecordRaw> = [
     name: 'CreateRoom',
     component: () => import('../views/rooms/Create.vue'),
     beforeEnter: authGuard
+  },
+  {
+    path: '/rooms/:roomId',
+    name: 'Room',
+    component: () => import('../views/rooms/Room.vue'),
+    beforeEnter: authGuard
   }
 ];
 
