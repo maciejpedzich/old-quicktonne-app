@@ -1,6 +1,7 @@
 interface ImportMeta {
   env: {
     MODE: 'development' | 'production';
+    VITE_API_URL: string;
     VITE_AUTH0_CLIENT_ID: string;
     VITE_AUTH0_DOMAIN: string;
     VITE_FIREBASE_API_KEY: string;
