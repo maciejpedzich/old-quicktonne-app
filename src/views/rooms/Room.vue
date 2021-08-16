@@ -2,10 +2,10 @@
   <ProgressSpinner v-if="isFetchingRoomData" class="align-self-center" />
   <div v-else class="flex-grow-1 align-self-stretch">
     <Splitter class="h-full">
-      <SplitterPanel class="flex align-items-stretch" :minSize="25">
+      <SplitterPanel class="flex align-items-stretch" :minSize="30">
         <VAceEditor
-          class="flex-grow-1"
           ref="codeEditor"
+          class="flex-grow-1"
           :printMargin="false"
           :options="editorOptions"
           v-model:value="editorContent"
@@ -13,8 +13,8 @@
           lang="javascript"
         ></VAceEditor>
       </SplitterPanel>
-      <SplitterPanel :minSize="25">
-        <TabView lazy>
+      <SplitterPanel :minSize="30">
+        <TabView class="min-h-full flex flex-column" lazy>
           <TabPanel>
             <template #header>
               <i class="pi pi-play"></i>
@@ -34,7 +34,7 @@
               <i class="pi pi-comments"></i>
               <span class="ml-2">Chat</span>
             </template>
-            Chat
+            <ChatRoomTab />
           </TabPanel>
         </TabView>
       </SplitterPanel>
@@ -43,7 +43,8 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from 'vue';
+import { defineComponent, onMounted, onUnmounted } from 'vue';
+import { useRoute } from 'vue-router';
 
 import ProgressSpinner from 'primevue/progressspinner';
 import Splitter from 'primevue/splitter';
@@ -57,13 +58,18 @@ import 'ace-builds/src-min-noconflict/theme-twilight';
 // TODO: Figure out how to dynamically import and properly load modes
 import 'ace-builds/src-min-noconflict/mode-javascript';
 
-import useCodeEditor from '@/composables/useCodeEditor';
+import ChatRoomTab from '@/components/roomTabs/Chat.vue';
+
+import socket from '@/socket';
+import useAuth0 from '@/composables/useAuth0';
 import useGetRoom from '@/composables/rooms/useGetRoom';
-import { useRoute } from 'vue-router';
+import useCodeEditor from '@/composables/useCodeEditor';
+import useChat from '@/composables/useChat';
 
 export default defineComponent({
   name: 'Room',
   components: {
+    ChatRoomTab,
     ProgressSpinner,
     Splitter,
     SplitterPanel,
@@ -72,14 +78,53 @@ export default defineComponent({
     VAceEditor
   },
   setup() {
+    const { currentUser } = useAuth0();
     const route = useRoute();
-    const { isFetchingRoomData, room, getRoom } = useGetRoom(
-      route.params.roomId as string
-    );
+    const roomId = route.params.roomId as string;
 
-    onMounted(getRoom);
+    const { isFetchingRoomData, room, getRoom, setRoomIsOccupied } =
+      useGetRoom(roomId);
+
+    const { addNewMessagesListener, clearMessages, removeNewMessagesListener } =
+      useChat();
+
+    onMounted(() => {
+      getRoom();
+
+      socket.connect();
+      socket.emit('joinRoom', roomId);
+      addNewMessagesListener();
+    });
+
+    onUnmounted(() => {
+      currentUser.value?.email !== room.value?.creator.email &&
+        setRoomIsOccupied(false);
+
+      clearMessages();
+      removeNewMessagesListener();
+
+      socket.emit('leaveRoom', roomId);
+      socket.disconnect();
+    });
 
     return { isFetchingRoomData, room, ...useCodeEditor() };
   }
 });
 </script>
+
+<style scoped>
+::v-deep(.p-tabview .p-tabview-panels),
+::v-deep(.p-tabview-panels .p-tabview-panel) {
+  flex-grow: 1;
+}
+
+::v-deep(.p-tabview .p-tabview-panels) {
+  padding: 0;
+  display: flex;
+  flex-direction: column;
+}
+
+::v-deep(.p-tabview-panels .p-tabview-panel) {
+  position: relative;
+}
+</style>
