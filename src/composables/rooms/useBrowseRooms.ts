@@ -41,7 +41,7 @@ export default function useBrowseRooms(): UseBrowseRoomsReturn {
     const getRoomsQuery = query(
       roomsCollection,
       where('language', 'in', preferredLanguages.value),
-      where('isOccupied', '==', false),
+      where('guest', '==', null),
       orderBy('dateCreated', 'desc')
     );
 

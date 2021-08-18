@@ -20,8 +20,8 @@ export default function useCreateRoom(): UseCreateRoomReturn {
   const isLoading = ref(false);
   const room = reactive<Room>({
     language: '',
-    creator: currentUser.value as User,
-    isOccupied: false
+    host: currentUser.value as User,
+    guest: null
   });
 
   const createRoom = async () => {
