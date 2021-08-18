@@ -2,19 +2,20 @@ import { ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 
+import { User } from '@auth0/auth0-spa-js';
 import { doc, getDoc, updateDoc } from '@firebase/firestore';
 
 import db from '@/db';
 import Room from '@/types/models/Room';
 
 import useAuth0 from '../useAuth0';
-
 import logErrorInDevMode from '@/utils/logErrorInDevMode';
 import createFirestoreConverter from '@/utils/createFirestoreConverter';
 import assignIdToDocData from '@/utils/assignIdToDocData';
-import UseGetRoomReturn from '@/types/return/UseGetRoom';
+import UseManageRoomReturn from '@/types/return/UseManageRoom';
+import { deleteDoc, onSnapshot } from 'firebase/firestore';
 
-export default function useGetRoom(roomId: string): UseGetRoomReturn {
+export default function useManageRoom(roomId: string): UseManageRoomReturn {
   const router = useRouter();
   const toast = useToast();
   const { currentUser } = useAuth0();
@@ -26,15 +27,17 @@ export default function useGetRoom(roomId: string): UseGetRoomReturn {
     createFirestoreConverter<Room>()
   );
 
-  const setRoomIsOccupied = async (isOccupied: boolean) => {
+  let cancelRoomUpdatesSub: (() => void) | null = null;
+
+  const setRoomMembers = async (guest: User | null, host: User | null) => {
     try {
-      await updateDoc(roomDocRef, { isOccupied });
+      await updateDoc(roomDocRef, { guest, host });
     } catch (error) {
       logErrorInDevMode(error);
       toast.add({
         severity: 'error',
         summary: 'Error',
-        detail: 'Failed to update room status',
+        detail: 'Failed to update room members',
         life: 3000
       });
     }
@@ -45,12 +48,18 @@ export default function useGetRoom(roomId: string): UseGetRoomReturn {
       const snapshot = await getDoc(roomDocRef);
       const roomData = assignIdToDocData<Room>(snapshot);
 
-      if (!snapshot.exists() || roomData.isOccupied) {
+      if (!snapshot.exists() || !!roomData.guest) {
         throw new Error('ROOM_UNAVAILABLE');
       }
 
-      currentUser.value?.email !== roomData.creator.email &&
-        setRoomIsOccupied(true);
+      cancelRoomUpdatesSub = onSnapshot(roomDocRef, (doc) => {
+        const updatedRoomData = assignIdToDocData<Room>(doc);
+        console.log(updatedRoomData);
+        room.value = updatedRoomData;
+      });
+
+      currentUser.value?.email !== roomData.host?.email &&
+        setRoomMembers(currentUser.value, roomData.host);
 
       room.value = roomData;
       isFetchingRoomData.value = false;
@@ -61,7 +70,7 @@ export default function useGetRoom(roomId: string): UseGetRoomReturn {
         summary: 'Error',
         detail:
           error.message === 'ROOM_UNAVAILABLE'
-            ? "Room is occupied or doesn't exist"
+            ? "This room is occupied or doesn't exist"
             : 'Failed to obtain room data',
         life: 3000
       });
@@ -69,5 +78,26 @@ export default function useGetRoom(roomId: string): UseGetRoomReturn {
     }
   };
 
-  return { isFetchingRoomData, room, getRoom, setRoomIsOccupied };
+  const deleteRoom = async () => {
+    try {
+      await deleteDoc(roomDocRef);
+    } catch (error) {
+      logErrorInDevMode(error);
+      toast.add({
+        severity: 'error',
+        summary: 'Error',
+        detail: 'Failed to delete room',
+        life: 3000
+      });
+    }
+  };
+
+  return {
+    isFetchingRoomData,
+    room,
+    getRoom,
+    setRoomMembers,
+    deleteRoom,
+    cancelRoomUpdatesSub
+  };
 }

@@ -25,9 +25,9 @@
           <TabPanel>
             <template #header>
               <i class="pi pi-sort-alt"></i>
-              <span class="ml-2">Stdin/Stdout</span>
+              <span class="ml-2">Input/Output</span>
             </template>
-            Stdin/Stdout
+            Input/Output
           </TabPanel>
           <TabPanel>
             <template #header>
@@ -54,6 +54,7 @@ import TabPanel from 'primevue/tabpanel';
 
 import { VAceEditor } from 'vue3-ace-editor';
 import 'ace-builds/src-min-noconflict/theme-twilight';
+import '@convergencelabs/ace-collab-ext/dist/css/ace-collab-ext.min.css';
 
 // TODO: Figure out how to dynamically import and properly load modes
 import 'ace-builds/src-min-noconflict/mode-javascript';
@@ -62,9 +63,11 @@ import ChatRoomTab from '@/components/roomTabs/Chat.vue';
 
 import socket from '@/socket';
 import useAuth0 from '@/composables/useAuth0';
-import useGetRoom from '@/composables/rooms/useGetRoom';
+import useManageRoom from '@/composables/rooms/useManageRoom';
 import useCodeEditor from '@/composables/useCodeEditor';
 import useChat from '@/composables/useChat';
+import Room from '@/types/models/Room';
+import { User } from '@auth0/auth0-spa-js';
 
 export default defineComponent({
   name: 'Room',
@@ -82,11 +85,16 @@ export default defineComponent({
     const route = useRoute();
     const roomId = route.params.roomId as string;
 
-    const { isFetchingRoomData, room, getRoom, setRoomIsOccupied } =
-      useGetRoom(roomId);
+    const {
+      isFetchingRoomData,
+      room,
+      getRoom,
+      setRoomMembers,
+      deleteRoom,
+      cancelRoomUpdatesSub
+    } = useManageRoom(roomId);
 
-    const { addNewMessagesListener, clearMessages, removeNewMessagesListener } =
-      useChat();
+    const { addNewMessagesListener, clearMessages } = useChat();
 
     onMounted(() => {
       getRoom();
@@ -97,12 +105,21 @@ export default defineComponent({
     });
 
     onUnmounted(() => {
-      currentUser.value?.email !== room.value?.creator.email &&
-        setRoomIsOccupied(false);
+      const isHostLeaving =
+        currentUser.value?.email === room.value?.host?.email;
+
+      cancelRoomUpdatesSub && cancelRoomUpdatesSub();
+
+      isHostLeaving && !room.value?.guest
+        ? deleteRoom()
+        : setRoomMembers(
+            null,
+            isHostLeaving
+              ? ((room.value as Room).guest as User)
+              : (room.value as Room).host
+          );
 
       clearMessages();
-      removeNewMessagesListener();
-
       socket.emit('leaveRoom', roomId);
       socket.disconnect();
     });
