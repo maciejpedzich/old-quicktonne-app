@@ -43,16 +43,12 @@ export default function useChat() {
 
   const addNewMessagesListener = () => socket.on('newChatMessage', addMessage);
 
-  const removeNewMessagesListener = () =>
-    socket.off('newChatMessage', addMessage);
-
   return {
     messageContent,
     messageLength,
     messages,
     sendAndPushMessage,
     clearMessages,
-    addNewMessagesListener,
-    removeNewMessagesListener
+    addNewMessagesListener
   };
 }
