@@ -2,13 +2,17 @@
   <p class="mx-5 pb-2 text-center border-bottom-1 border-200">
     No mic? No problem - drop a message here!
   </p>
-  <div class="flex ml-3 mt-4" v-for="(message, index) of messages" :key="index">
+  <div
+    class="flex ml-3 mt-4 overflow-y-auto"
+    v-for="(message, index) of messages"
+    :key="index"
+  >
     <Avatar shape="circle" size="large" :image="message.author.picture" />
     <div class="flex-1 mx-3">
       <div class="mb-2">
         <span class="font-bold text-lg">{{ message.author.nickname }}</span>
         <span class="ml-2 text-600 text-sm">
-          {{ format(new Date(message.dateCreated), 'MM/dd/yyyy, hh:mm a') }}
+          {{ format(new Date(message.dateCreated), 'hh:mm a') }}
         </span>
       </div>
       <span class="messageContent">{{ message.content }}</span>
@@ -57,6 +61,10 @@ export default defineComponent({
 </script>
 
 <style scoped>
+#messagesContainer {
+  overflow-y: scroll;
+}
+
 .messageContent {
   line-break: anywhere;
 }
