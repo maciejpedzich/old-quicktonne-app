@@ -1,6 +1,9 @@
-import vue from '@vitejs/plugin-vue';
+import { defineConfig } from 'vite';
 
-export default {
+import vue from '@vitejs/plugin-vue';
+import { nodeResolve } from '@rollup/plugin-node-resolve';
+
+export default defineConfig({
   resolve: {
     alias: [
       {
@@ -9,5 +12,5 @@ export default {
       }
     ]
   },
-  plugins: [vue()]
-};
+  plugins: [vue(), nodeResolve()]
+});

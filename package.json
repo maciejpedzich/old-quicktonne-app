@@ -27,6 +27,7 @@
     "vue3-ace-editor": "^2.0.2"
   },
   "devDependencies": {
+    "@rollup/plugin-node-resolve": "^13.0.4",
     "@types/debounce": "^1.2.0",
     "@types/jest": "^24.0.19",
     "@typescript-eslint/eslint-plugin": "^4.18.0",
