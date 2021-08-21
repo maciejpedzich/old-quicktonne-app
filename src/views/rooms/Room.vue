@@ -3,15 +3,7 @@
   <div v-else class="flex-grow-1 align-self-stretch">
     <Splitter class="h-full">
       <SplitterPanel class="flex align-items-stretch" :minSize="30">
-        <VAceEditor
-          ref="codeEditor"
-          class="flex-grow-1"
-          :printMargin="false"
-          :options="editorOptions"
-          v-model:value="editorContent"
-          theme="twilight"
-          lang="javascript"
-        ></VAceEditor>
+        <CodeEditor :language="room?.language" />
       </SplitterPanel>
       <SplitterPanel :minSize="30">
         <TabView class="min-h-full flex flex-column" lazy>
@@ -52,13 +44,7 @@ import SplitterPanel from 'primevue/splitterpanel';
 import TabView from 'primevue/tabview';
 import TabPanel from 'primevue/tabpanel';
 
-import { VAceEditor } from 'vue3-ace-editor';
-import 'ace-builds/src-min-noconflict/theme-twilight';
-import '@convergencelabs/ace-collab-ext/dist/css/ace-collab-ext.min.css';
-
-// TODO: Figure out how to dynamically import and properly load modes
-import 'ace-builds/src-min-noconflict/mode-javascript';
-
+import CodeEditor from '@/components/CodeEditor.vue';
 import ChatRoomTab from '@/components/roomTabs/Chat.vue';
 
 import socket from '@/socket';
@@ -72,13 +58,13 @@ import { User } from '@auth0/auth0-spa-js';
 export default defineComponent({
   name: 'Room',
   components: {
+    CodeEditor,
     ChatRoomTab,
     ProgressSpinner,
     Splitter,
     SplitterPanel,
     TabView,
-    TabPanel,
-    VAceEditor
+    TabPanel
   },
   setup() {
     const { currentUser } = useAuth0();
