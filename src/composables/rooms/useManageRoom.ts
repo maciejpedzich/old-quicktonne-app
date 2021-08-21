@@ -3,7 +3,13 @@ import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 
 import { User } from '@auth0/auth0-spa-js';
-import { doc, getDoc, updateDoc } from '@firebase/firestore';
+import {
+  doc,
+  getDoc,
+  updateDoc,
+  deleteDoc,
+  onSnapshot
+} from '@firebase/firestore';
 
 import db from '@/db';
 import Room from '@/types/models/Room';
@@ -13,7 +19,6 @@ import logErrorInDevMode from '@/utils/logErrorInDevMode';
 import createFirestoreConverter from '@/utils/createFirestoreConverter';
 import assignIdToDocData from '@/utils/assignIdToDocData';
 import UseManageRoomReturn from '@/types/return/UseManageRoom';
-import { deleteDoc, onSnapshot } from 'firebase/firestore';
 
 export default function useManageRoom(roomId: string): UseManageRoomReturn {
   const router = useRouter();
@@ -54,7 +59,6 @@ export default function useManageRoom(roomId: string): UseManageRoomReturn {
 
       cancelRoomUpdatesSub = onSnapshot(roomDocRef, (doc) => {
         const updatedRoomData = assignIdToDocData<Room>(doc);
-        console.log(updatedRoomData);
         room.value = updatedRoomData;
       });
 
