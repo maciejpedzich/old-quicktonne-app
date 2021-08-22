@@ -9,10 +9,11 @@ export default function useCodeEditor(): UseCodeEditorReturn {
   const editorOptions = { fontSize: 18 };
 
   const setEditorLanguage = async (language: string) => {
-    /* @vite-ignore */
     await import(
+      /* @vite-ignore */
       `../../node_modules/ace-builds/src-noconflict/mode-${language}`
     );
+
     codeEditorElement.value?._editor
       .getSession()
       .setMode(`ace/mode/${language}`);
