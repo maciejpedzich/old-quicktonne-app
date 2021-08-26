@@ -10,7 +10,7 @@
 </template>
 
 <script lang="ts">
-import { defineComponent, onMounted } from 'vue';
+import { defineComponent, onMounted, toRefs, watch } from 'vue';
 
 import { VAceEditor } from 'vue3-ace-editor';
 import 'ace-builds/src-min-noconflict/theme-twilight';
@@ -24,20 +24,39 @@ export default defineComponent({
     VAceEditor
   },
   props: {
+    partnerUsername: {
+      type: String,
+      required: true
+    },
     language: {
       type: String,
       required: true
     }
   },
   setup(props) {
+    const { partnerUsername, language } = toRefs(props);
+
     const {
       codeEditorElement,
       editorContent,
       editorOptions,
-      setEditorLanguage
-    } = useCodeEditor();
+      setEditorLanguage,
+      initRemoteEditingManagers,
+      removeRemoteEditingManagers,
+      addRemoteChangeListeners
+    } = useCodeEditor(partnerUsername);
 
-    onMounted(() => setEditorLanguage(props.language));
+    onMounted(() => {
+      setEditorLanguage(language.value);
+      addRemoteChangeListeners();
+
+      partnerUsername.value.length > 0 && initRemoteEditingManagers();
+    });
+
+    watch(partnerUsername, (newUsername, oldUsername) => {
+      oldUsername.length > 0 && removeRemoteEditingManagers(oldUsername);
+      newUsername.length > 0 && initRemoteEditingManagers();
+    });
 
     return { codeEditorElement, editorContent, editorOptions };
   }

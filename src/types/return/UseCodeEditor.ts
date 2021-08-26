@@ -9,6 +9,9 @@ type UseCodeEditorReturn = {
     [Property in keyof Ace.EditorOptions]?: Ace.EditorOptions[Property];
   };
   setEditorLanguage(language: string): Promise<void>;
+  initRemoteEditingManagers(): void;
+  removeRemoteEditingManagers(oldUsername: string): void;
+  addRemoteChangeListeners(): void;
 };
 
 export default UseCodeEditorReturn;
