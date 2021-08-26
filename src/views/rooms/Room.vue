@@ -2,10 +2,13 @@
   <ProgressSpinner v-if="isFetchingRoomData" class="align-self-center" />
   <div v-else class="flex-grow-1 align-self-stretch">
     <Splitter class="h-full">
-      <SplitterPanel class="flex align-items-stretch" :minSize="30">
-        <CodeEditor :language="room?.language" />
+      <SplitterPanel class="flex align-items-stretch" :minSize="25">
+        <CodeEditor
+          :language="room?.language"
+          :partnerUsername="partnerUsername"
+        />
       </SplitterPanel>
-      <SplitterPanel :minSize="30">
+      <SplitterPanel :minSize="25">
         <TabView class="min-h-full flex flex-column" lazy>
           <TabPanel>
             <template #header>
@@ -37,6 +40,7 @@
 <script lang="ts">
 import { defineComponent, onMounted, onUnmounted } from 'vue';
 import { useRoute } from 'vue-router';
+import { User } from '@auth0/auth0-spa-js';
 
 import ProgressSpinner from 'primevue/progressspinner';
 import Splitter from 'primevue/splitter';
@@ -48,12 +52,10 @@ import CodeEditor from '@/components/CodeEditor.vue';
 import ChatRoomTab from '@/components/roomTabs/Chat.vue';
 
 import socket from '@/socket';
+import Room from '@/types/models/Room';
 import useAuth0 from '@/composables/useAuth0';
 import useManageRoom from '@/composables/rooms/useManageRoom';
-import useCodeEditor from '@/composables/useCodeEditor';
 import useChat from '@/composables/useChat';
-import Room from '@/types/models/Room';
-import { User } from '@auth0/auth0-spa-js';
 
 export default defineComponent({
   name: 'Room',
@@ -74,6 +76,7 @@ export default defineComponent({
     const {
       isFetchingRoomData,
       room,
+      partnerUsername,
       getRoom,
       setRoomMembers,
       deleteRoom,
@@ -91,18 +94,19 @@ export default defineComponent({
     });
 
     onUnmounted(() => {
-      const isHostLeaving =
-        currentUser.value?.email === room.value?.host?.email;
+      const roomData = room.value;
+
+      const isHostLeaving = currentUser.value?.email === roomData?.host?.email;
 
       cancelRoomUpdatesSub && cancelRoomUpdatesSub();
 
-      isHostLeaving && !room.value?.guest
+      isHostLeaving && !roomData?.guest
         ? deleteRoom()
         : setRoomMembers(
             null,
             isHostLeaving
-              ? ((room.value as Room).guest as User)
-              : (room.value as Room).host
+              ? ((roomData as Room).guest as User)
+              : (roomData as Room).host
           );
 
       clearMessages();
@@ -110,7 +114,7 @@ export default defineComponent({
       socket.disconnect();
     });
 
-    return { isFetchingRoomData, room, ...useCodeEditor() };
+    return { isFetchingRoomData, room, partnerUsername };
   }
 });
 </script>

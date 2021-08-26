@@ -1,4 +1,4 @@
-import { ref } from 'vue';
+import { computed, ref } from 'vue';
 import { useRouter } from 'vue-router';
 import { useToast } from 'primevue/usetoast';
 
@@ -27,6 +27,17 @@ export default function useManageRoom(roomId: string): UseManageRoomReturn {
 
   const isFetchingRoomData = ref(true);
   const room = ref<Room | null>(null);
+
+  const partnerUsername = computed(() => {
+    const hostUsername = room.value?.host?.nickname;
+    const guestUsername = room.value?.guest?.nickname;
+
+    return (
+      (currentUser.value?.nickname === hostUsername
+        ? guestUsername
+        : hostUsername) || ''
+    );
+  });
 
   const roomDocRef = doc(db, 'rooms', roomId).withConverter(
     createFirestoreConverter<Room>()
@@ -99,6 +110,7 @@ export default function useManageRoom(roomId: string): UseManageRoomReturn {
   return {
     isFetchingRoomData,
     room,
+    partnerUsername,
     getRoom,
     setRoomMembers,
     deleteRoom,
