@@ -18,7 +18,8 @@
     </div>
     <div v-else>
       <p class="text-2xl mt-3 mb-4">
-        Catchy slogan goes here, think about it later...
+        It's like Instagram, but you don't post photos. You get to code with a
+        stranger instead
       </p>
       <Button class="p-button-lg" label="Join now" @click="loginWithRedirect" />
     </div>
