@@ -1,10 +1,12 @@
 <template>
   <!-- Better safe than sorry -->
-  <p>
-    You should now be automatically redirected to Auth0 page. But if you can
-    still see this message, click the button below to log in.
-  </p>
-  <Button label="Log in" @click="loginWithRedirect" />
+  <div class="block text-center">
+    <p>
+      You should now be automatically redirected to Auth0 page. But if you can
+      still see this message, click the button below to log in.
+    </p>
+    <Button label="Log in" @click="loginWithRedirect" />
+  </div>
 </template>
 
 <script lang="ts">
