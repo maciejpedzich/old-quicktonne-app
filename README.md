@@ -1,9 +1,12 @@
 # quicktonne-app
 
+Frontend for the Quicktonne app. Requires [quicktonne-server](https://github.com/maciejpedzich/quicktonne-server) in order for real-time chat and collaborative editing to work properly.
+
 ## Project setup
 
 ```
-npm install
+> git clone https://github.com/maciejpedzich/quicktonne-app.git
+> npm install
 ```
 
 ### Environment variables
