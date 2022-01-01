@@ -1,6 +1,6 @@
 # ARCHIVE NOTE
 
-This is an old version of an auxilary Socket.io server for an equally old version of Quicktonne. See: [quicktonne](https://github.com/maciejpedzich/quicktonne) repository for the latest version of this app.
+This is an old version of Quicktonne Vue app. See: [quicktonne](https://github.com/maciejpedzich/quicktonne) repository for the latest version.
 
 # quicktonne-app
 
